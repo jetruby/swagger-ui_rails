@@ -1296,7 +1296,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     SwaggerUi.prototype.buildUrl = function(base, url) {
       var parts;
-      console.log("base is " + base);
       parts = base.split("/");
       base = parts[0] + "//" + parts[2];
       if (url.indexOf("/") === 0) {
@@ -1449,7 +1448,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
 
     ResourceView.prototype.render = function() {
       var operation, _i, _len, _ref;
-      console.log(this.model.description);
       $(this.el).html(Handlebars.templates.resource(this.model));
       this.number = 0;
       _ref = this.model.operationsArray;
@@ -1530,7 +1528,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
         type = param.type || param.dataType;
         if (type.toLowerCase() === 'file') {
           if (!contentTypeModel.consumes) {
-            console.log("set content type ");
             contentTypeModel.consumes = 'multipart/form-data';
           }
         }
@@ -1641,7 +1638,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     OperationView.prototype.handleFileUpload = function(map, form) {
       var bodyParam, headerParams, o, obj, param, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2,
         _this = this;
-      console.log("it's a file upload");
       _ref = form.serializeArray();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         o = _ref[_i];
@@ -1665,11 +1661,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
           headerParams[param.name] = map[param.name];
         }
       }
-      console.log(headerParams);
       $.each($('input[type~="file"]'), function(i, el) {
         return bodyParam.append($(el).attr('name'), el.files[0]);
       });
-      console.log(bodyParam);
       this.invocationUrl = this.model.supportHeaderParams() ? (headerParams = this.model.getHeaderParams(map), this.model.urlify(map, false)) : this.model.urlify(map, true);
       $(".request_url", $(this.el)).html("<pre>" + this.invocationUrl + "</pre>");
       obj = {
@@ -1746,7 +1740,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
     OperationView.prototype.showResponse = function(response) {
       var prettyJson;
       prettyJson = JSON.stringify(response, null, "\t").replace(/\n/g, "<br>");
-      console.log(prettyJson);
       return $(".response_body", $(this.el)).html(escape(prettyJson));
     };
 
