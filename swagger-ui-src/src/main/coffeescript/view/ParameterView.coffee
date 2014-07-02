@@ -6,7 +6,7 @@ class ParameterView extends Backbone.View
     @model.isBody = true if @model.paramType == 'body'
     @model.isFile = true if type.toLowerCase() == 'file'
 
-    if @model.scope
+    if @model.scope && @model.name.indexOf('[') == -1
       @model.name = "#{@model.scope}[#{@model.name}]"
 
     template = @template()
