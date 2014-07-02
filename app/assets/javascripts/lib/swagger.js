@@ -321,25 +321,6 @@
       }
     }
 
-    SwaggerResource.prototype.getAbsoluteBasePath = function(relativeBasePath) {
-      var parts, pos, url;
-      url = this.api.basePath;
-      pos = url.lastIndexOf(relativeBasePath);
-      if (pos === -1) {
-        parts = url.split("/");
-        url = parts[0] + "//" + parts[2];
-        if (relativeBasePath.indexOf("/") === 0) {
-          return url + relativeBasePath;
-        } else {
-          return url + "/" + relativeBasePath;
-        }
-      } else if (relativeBasePath === "/") {
-        return url.substring(0, pos);
-      } else {
-        return url.substring(0, pos) + relativeBasePath;
-      }
-    };
-
     SwaggerResource.prototype.addApiDeclaration = function(response) {
       var endpoint, _i, _len, _ref;
       if (response.produces != null) {
@@ -349,7 +330,7 @@
         this.consumes = response.consumes;
       }
       if ((response.basePath != null) && response.basePath.replace(/\s/g, '').length > 0) {
-        this.basePath = response.basePath.indexOf("http") === -1 ? this.getAbsoluteBasePath(response.basePath) : response.basePath;
+        this.basePath = response.basePath;
       }
       this.addModels(response.models);
       if (response.apis) {
@@ -427,7 +408,7 @@
             }
           }
           o.nickname = this.sanitize(o.nickname);
-          op = new SwaggerOperation(o.nickname, resource_path, method, o.parameters, o.summary, o.notes, o.exampleResponse, type, responseMessages, this, consumes, produces, o.authorizations);
+          op = new SwaggerOperation(o.nickname, resource_path, method, o.parameters, o.summary, o.notes, type, responseMessages, this, consumes, produces);
           this.operations[op.nickname] = op;
           _results.push(this.operationsArray.push(op));
         }
@@ -619,7 +600,7 @@
   })();
 
   SwaggerOperation = (function() {
-    function SwaggerOperation(nickname, path, method, parameters, summary, notes, exampleResponse, type, responseMessages, resource, consumes, produces, authorizations) {
+    function SwaggerOperation(nickname, path, method, parameters, summary, notes, type, responseMessages, resource, consumes, produces) {
       var parameter, v, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3,
         _this = this;
       this.nickname = nickname;
@@ -628,13 +609,11 @@
       this.parameters = parameters != null ? parameters : [];
       this.summary = summary;
       this.notes = notes;
-      this.exampleResponse = exampleResponse;
       this.type = type;
       this.responseMessages = responseMessages;
       this.resource = resource;
       this.consumes = consumes;
       this.produces = produces;
-      this.authorizations = authorizations;
       this["do"] = __bind(this["do"], this);
       if (this.nickname == null) {
         this.resource.api.fail("SwaggerOperations must have a nickname.");
@@ -677,12 +656,12 @@
             v = _ref2[_j];
             if ((parameter.defaultValue != null) && parameter.defaultValue === v) {
               parameter.allowableValues.descriptiveValues.push({
-                value: String(v),
+                value: v,
                 isDefault: true
               });
             } else {
               parameter.allowableValues.descriptiveValues.push({
-                value: String(v),
+                value: v,
                 isDefault: false
               });
             }
@@ -936,7 +915,7 @@
 
   SwaggerRequest = (function() {
     function SwaggerRequest(type, url, params, opts, successCallback, errorCallback, operation, execution) {
-      var body, e, fields, headers, key, myHeaders, name, obj, param, parent, possibleParams, requestContentType, responseContentType, status, urlEncoded, value, values,
+      var body, e, fields, headers, key, myHeaders, name, obj, param, parent, possibleParams, requestContentType, responseContentType, urlEncoded, value, values,
         _this = this;
       this.type = type;
       this.url = url;
@@ -1095,13 +1074,9 @@
         } else {
           e = exports;
         }
-        status = e.authorizations.apply(obj, this.operation.authorizations);
+        e.authorizations.apply(obj);
         if (opts.mock == null) {
-          if (status !== false) {
-            new SwaggerHttp().execute(obj);
-          } else {
-            obj.canceled = true;
-          }
+          new SwaggerHttp().execute(obj);
         } else {
           console.log(obj);
           return obj;
@@ -1184,25 +1159,15 @@
       return auth;
     };
 
-    SwaggerAuthorizations.prototype.remove = function(name) {
-      return delete this.authz[name];
-    };
-
-    SwaggerAuthorizations.prototype.apply = function(obj, authorizations) {
-      var key, result, status, value, _ref;
-      status = null;
+    SwaggerAuthorizations.prototype.apply = function(obj) {
+      var key, value, _ref, _results;
       _ref = this.authz;
+      _results = [];
       for (key in _ref) {
         value = _ref[key];
-        result = value.apply(obj, authorizations);
-        if (result === false) {
-          status = false;
-        }
-        if (result === true) {
-          status = true;
-        }
+        _results.push(value.apply(obj));
       }
-      return status;
+      return _results;
     };
 
     return SwaggerAuthorizations;
@@ -1222,7 +1187,7 @@
       this.type = type;
     }
 
-    ApiKeyAuthorization.prototype.apply = function(obj, authorizations) {
+    ApiKeyAuthorization.prototype.apply = function(obj) {
       if (this.type === "query") {
         if (obj.url.indexOf('?') > 0) {
           obj.url = obj.url + "&" + this.name + "=" + this.value;
@@ -1231,8 +1196,7 @@
         }
         return true;
       } else if (this.type === "header") {
-        obj.headers[this.name] = this.value;
-        return true;
+        return obj.headers[this.name] = this.value;
       }
     };
 
@@ -1241,8 +1205,6 @@
   })();
 
   PasswordAuthorization = (function() {
-    PasswordAuthorization._btoa = null;
-
     PasswordAuthorization.prototype.name = null;
 
     PasswordAuthorization.prototype.username = null;
@@ -1253,20 +1215,10 @@
       this.name = name;
       this.username = username;
       this.password = password;
-      PasswordAuthorization._ensureBtoa();
     }
 
-    PasswordAuthorization.prototype.apply = function(obj, authorizations) {
-      obj.headers["Authorization"] = "Basic " + PasswordAuthorization._btoa(this.username + ":" + this.password);
-      return true;
-    };
-
-    PasswordAuthorization._ensureBtoa = function() {
-      if (typeof window !== 'undefined') {
-        return this._btoa = btoa;
-      } else {
-        return this._btoa = require("btoa");
-      }
+    PasswordAuthorization.prototype.apply = function(obj) {
+      return obj.headers["Authorization"] = "Basic " + btoa(this.username + ":" + this.password);
     };
 
     return PasswordAuthorization;
