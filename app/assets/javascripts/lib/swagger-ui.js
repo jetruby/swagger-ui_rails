@@ -1916,6 +1916,9 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       if (type.toLowerCase() === 'file') {
         this.model.isFile = true;
       }
+      if (this.model.scope && this.model.name.indexOf('[') === -1) {
+        this.model.name = "" + this.model.scope + "[" + this.model.name + "]";
+      }
       template = this.template();
       $(this.el).html(template(this.model));
       signatureModel = {
