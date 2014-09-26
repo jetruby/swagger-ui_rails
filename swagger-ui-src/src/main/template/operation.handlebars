@@ -21,11 +21,11 @@
         <h4>Implementation Notes</h4>
         <p>{{{notes}}}</p>
         {{/if}}
-        {{#if exampleResponseFormatted}}
+        {{#if exampleResponse}}
         <div class='response'>
           <h4>Example Response Code</h4>
           <div class='block example_response_body json'>
-            <pre><code>{{{exampleResponseFormatted}}}</code></pre>
+            <pre><code>{{{exampleResponse}}}</code></pre>
           </div>
         </div>
         {{/if}}
@@ -56,7 +56,7 @@
           {{/if}}
           {{#if responseMessages}}
           <div style='margin:0;padding:0;display:inline'></div>
-          <h4>Error Status Codes</h4>
+          <h4>Response Status Codes</h4>
           <table class='fullwidth'>
             <thead>
             <tr>

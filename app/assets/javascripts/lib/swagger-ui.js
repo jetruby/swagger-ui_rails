@@ -329,8 +329,8 @@ function program3(depth0,data) {
   
   var buffer = "", stack1;
   buffer += "\n        <div class='response'>\n          <h4>Example Response Code</h4>\n          <div class='block example_response_body json'>\n            <pre><code>";
-  if (stack1 = helpers.exampleResponseFormatted) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
-  else { stack1 = depth0.exampleResponseFormatted; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
+  if (stack1 = helpers.exampleResponse) { stack1 = stack1.call(depth0, {hash:{},data:data}); }
+  else { stack1 = depth0.exampleResponse; stack1 = typeof stack1 === functionType ? stack1.apply(depth0) : stack1; }
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "</code></pre>\n          </div>\n        </div>\n        ";
   return buffer;
@@ -351,7 +351,7 @@ function program7(depth0,data) {
 function program9(depth0,data) {
   
   
-  return "\n          <div style='margin:0;padding:0;display:inline'></div>\n          <h4>Error Status Codes</h4>\n          <table class='fullwidth'>\n            <thead>\n            <tr>\n              <th>HTTP Status Code</th>\n              <th>Reason</th>\n            </tr>\n            </thead>\n            <tbody class=\"operation-status\">\n\n            </tbody>\n          </table>\n          ";
+  return "\n          <div style='margin:0;padding:0;display:inline'></div>\n          <h4>Response Status Codes</h4>\n          <table class='fullwidth'>\n            <thead>\n            <tr>\n              <th>HTTP Status Code</th>\n              <th>Reason</th>\n            </tr>\n            </thead>\n            <tbody class=\"operation-status\">\n\n            </tbody>\n          </table>\n          ";
   }
 
 function program11(depth0,data) {
@@ -466,7 +466,7 @@ function program13(depth0,data) {
   stack1 = helpers['if'].call(depth0, depth0.notes, {hash:{},inverse:self.noop,fn:self.program(1, program1, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        ";
-  stack1 = helpers['if'].call(depth0, depth0.exampleResponseFormatted, {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
+  stack1 = helpers['if'].call(depth0, depth0.exampleResponse, {hash:{},inverse:self.noop,fn:self.program(3, program3, data),data:data});
   if(stack1 || stack1 === 0) { buffer += stack1; }
   buffer += "\n        ";
   stack1 = helpers['if'].call(depth0, depth0.type, {hash:{},inverse:self.noop,fn:self.program(5, program5, data),data:data});
@@ -1498,9 +1498,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       isMethodSubmissionSupported = true;
       if (!isMethodSubmissionSupported) {
         this.model.isReadOnly = true;
-      }
-      if (this.model.exampleResponse) {
-        this.model.exampleResponseFormatted = JSON.stringify(this.model.exampleResponse, null, 2);
       }
       $(this.el).html(Handlebars.templates.operation(this.model));
       if (this.model.responseClassSignature && this.model.responseClassSignature !== 'string') {
