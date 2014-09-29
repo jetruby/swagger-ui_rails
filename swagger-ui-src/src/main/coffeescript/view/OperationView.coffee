@@ -14,9 +14,6 @@ class OperationView extends Backbone.View
     isMethodSubmissionSupported = true #jQuery.inArray(@model.method, @model.supportedSubmitMethods) >= 0
     @model.isReadOnly = true unless isMethodSubmissionSupported
 
-    if @model.exampleResponse
-      @model.exampleResponseFormatted = JSON.stringify(@model.exampleResponse, null, 2);
-
     $(@el).html(Handlebars.templates.operation(@model))
 
     if @model.responseClassSignature and @model.responseClassSignature != 'string'
