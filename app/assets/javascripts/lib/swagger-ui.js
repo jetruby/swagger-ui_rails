@@ -1513,8 +1513,6 @@ helpers = this.merge(helpers, Handlebars.helpers); data = data || {};
       if (!isMethodSubmissionSupported) {
         this.model.isReadOnly = true;
       }
-      console.log(this.model);
-      console.log('sdfasdf');
       $(this.el).html(Handlebars.templates.operation(this.model));
       if (this.model.responseClassSignature && this.model.responseClassSignature !== 'string') {
         signatureModel = {
