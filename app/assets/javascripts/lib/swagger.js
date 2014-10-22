@@ -408,7 +408,7 @@
             }
           }
           o.nickname = this.sanitize(o.nickname);
-          op = new SwaggerOperation(o.nickname, resource_path, method, o.parameters, o.summary, o.notes, type, responseMessages, o.exampleResponse, this, consumes, produces);
+          op = new SwaggerOperation(o.nickname, resource_path, method, o.parameters, o.summary, o.notes, type, responseMessages, o.exampleResponse, o.exampleRequest, this, consumes, produces);
           this.operations[op.nickname] = op;
           _results.push(this.operationsArray.push(op));
         }
@@ -600,7 +600,7 @@
   })();
 
   SwaggerOperation = (function() {
-    function SwaggerOperation(nickname, path, method, parameters, summary, notes, type, responseMessages, exampleResponse, resource, consumes, produces) {
+    function SwaggerOperation(nickname, path, method, parameters, summary, notes, type, responseMessages, exampleResponse, exampleRequest, resource, consumes, produces) {
       var parameter, v, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3,
         _this = this;
       this.nickname = nickname;
@@ -612,6 +612,7 @@
       this.type = type;
       this.responseMessages = responseMessages;
       this.exampleResponse = exampleResponse;
+      this.exampleRequest = exampleRequest;
       this.resource = resource;
       this.consumes = consumes;
       this.produces = produces;
